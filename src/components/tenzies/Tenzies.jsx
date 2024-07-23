@@ -13,38 +13,35 @@ export default function Tenzies() {
   const { elapsedTime, reset } = useElapsedTime({ isPlaying: isPlaying })
   const [animation, setAnimation] = useState(false)
 
-  useEffect(() => {
-    const heldDice = dice.filter(die => die.isHeld)
+  console.log('render')
 
-    const firstDieNumber = dice[0].number;
-    const sameNumberDice = dice.filter(die => die.number == firstDieNumber)
+  const heldDice = dice.filter(die => die.isHeld)
 
-    if (heldDice.length == 10 && sameNumberDice.length == 10) {
-      setTenzies(true)
+  const firstDieNumber = dice[0].number;
+  const sameNumberDice = dice.filter(die => die.number == firstDieNumber)
+
+  if (heldDice.length == 10 && sameNumberDice.length == 10 && !tenzies) {
+    setTenzies(true)
+  }
+
+  if (tenzies && isPlaying) {
+    setIsPlaying(false)
+
+    if (!topScores) {
+      localStorage.setItem('topScores', JSON.stringify({ time: Math.round(elapsedTime * 10) / 10, rolls: rolls }))
+      setTopScores({ time: Math.round(elapsedTime * 10) / 10, rolls: rolls })
     }
 
-  }, [dice])
-
-  useEffect(() => {
-    if (tenzies) {
-      setIsPlaying(false)
-
-      if (!topScores) {
-        localStorage.setItem('topScores', JSON.stringify({ time: Math.round(elapsedTime * 10) / 10, rolls: rolls }))
-        setTopScores({ time: Math.round(elapsedTime * 10) / 10, rolls: rolls })
-      }
-
-      if (topScores && rolls < topScores.rolls) {
-        localStorage.setItem('topScores', JSON.stringify({ ...topScores, rolls: rolls }))
-        setTopScores(prevTopScores => ({ ...prevTopScores, rolls: rolls }))
-      }
-
-      if (topScores && elapsedTime < topScores.time) {
-        localStorage.setItem('topScores', JSON.stringify({ ...topScores, time: Math.round(elapsedTime * 10) / 10 }))
-        setTopScores(prevTopScores => ({ ...prevTopScores, time: Math.round(elapsedTime * 10) / 10 }))
-      }
+    if (topScores && rolls < topScores.rolls) {
+      localStorage.setItem('topScores', JSON.stringify({ ...topScores, rolls: rolls }))
+      setTopScores(prevTopScores => ({ ...prevTopScores, rolls: rolls }))
     }
-  }, [tenzies])
+
+    if (topScores && elapsedTime < topScores.time) {
+      localStorage.setItem('topScores', JSON.stringify({ ...topScores, time: Math.round(elapsedTime * 10) / 10 }))
+      setTopScores(prevTopScores => ({ ...prevTopScores, time: Math.round(elapsedTime * 10) / 10 }))
+    }
+  }
 
   function allNewDice() {
     const dice = [];
