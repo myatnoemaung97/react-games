@@ -95,7 +95,7 @@ export default function Tenzies() {
   const dieElements = dice.map(die => <Die die={die} holdDie={() => holdDie(die.id)} key={die.id} animation={animation} />)
 
   return (
-    <div className="max-w-[600px] my-0 mx-auto p-3 mt-5 rounded-lg bg-zinc-500 font-mono shadow-2xl">
+    <div className="max-w-[600px] w-11/12 my-0 mx-auto p-3 mt-5 rounded-lg bg-zinc-500 font-mono shadow-2xl">
       <h1 className="text-4xl font-semibold text-center">Tenzies</h1>
       <div className="flex justify-evenly mt-5">
         <div className="bg-slate-300 p-3 rounded-lg">
