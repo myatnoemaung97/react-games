@@ -66,8 +66,9 @@ export default function Quiz() {
 
   if (loading) {
     return (
-      <div className='w-screen h-screen flex justify-center items-center font-mono'>
-        <div className='w-[600px] h-[300px] p-5'>
+      <div className='max-w-[600px] w-11/12 mx-auto font-mono mt-20'>
+        <h1 className='text-center text-4xl md:text-5xl mb-5'>Quiz</h1>
+        <div className='h-[300px] p-5'>
           <div className='animate-pulse'>
             <h1 className='text-xl'>Loading...</h1>
             <div className='w-full h-[15px] bg-slate-300 rounded-lg'></div>
@@ -86,9 +87,10 @@ export default function Quiz() {
 
   if (currentQuestion >= quizes.length) {
     return (
-      <div className='w-screen h-screen flex justify-center items-center font-mono'>
+      <div className='max-w-[600px] w-11/12 mx-auto font-mono mt-24'>
+        <h1 className='text-center text-4xl md:text-5xl mb-10'>Quiz</h1>
         <div>
-          <p className='text-5xl'>Score: {score}/{quizes.length}</p>
+          <p className='text-5xl text-center'>Score: {score}/{quizes.length}</p>
 
           <div className='flex justify-center mt-5'>
             <Link to=".." relative='path' className='text-lg bg-slate-300 py-2 px-4 rounded'>Play Again</Link>
@@ -99,10 +101,9 @@ export default function Quiz() {
   }
 
   return (
-    <div className='w-screen h-screen flex justify-center items-center font-mono'>
-      <div className='max-w-[600px] w-11/12'>
-        {quizElements}
-      </div>
+    <div className='max-w-[600px] w-11/12 mx-auto font-mono mt-24'>
+      <h1 className='text-center text-4xl md:text-5xl mb-10'>Quiz</h1>
+      {quizElements}
     </div>
   )
 }
