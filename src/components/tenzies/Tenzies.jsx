@@ -97,14 +97,14 @@ export default function Tenzies() {
   return (
     <div className="max-w-[600px] w-11/12 my-0 mx-auto p-3 mt-5 rounded-lg bg-zinc-500 font-mono shadow-2xl">
       <h1 className="text-4xl font-semibold text-center">Tenzies</h1>
-      <div className="flex justify-evenly mt-5">
+      <div className="flex justify-evenly mt-5 text-sm md:text-base">
         <div className="bg-slate-300 p-3 rounded-lg">
-          <h1 className="text-xl mb-2">Top Scores</h1>
+          <h1 className="text-lg md:text-xl mb-2">Top Scores</h1>
           <p>Time: {topScores?.time || ''}s</p>
           <p>Rolls: {topScores?.rolls || ''}</p>
         </div>
         <div className="bg-slate-300 p-3 rounded-lg">
-          <h1 className="text-xl mb-2">Your Scores</h1>
+          <h1 className="text-lg md:text-xl mb-2">Your Scores</h1>
           <p>Time: {Math.round(elapsedTime * 10) / 10}s</p>
           <p>Rolls: {rolls}</p>
         </div>
