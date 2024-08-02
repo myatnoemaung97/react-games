@@ -10,18 +10,14 @@ export default function Die({ die, holdDie, animation }) {
   } 
 
   function hideDot(position, number) {
-    if (!position.includes(number)) {
-      return true;
-    }
-
-    return false
+    return !position.includes(number);
   }
 
   return (
     <div className={`flex justify-center ${animation && !die.isHeld ? 'animate-[wiggle_0.2s_infinite]' : ''}`} >
       <div
         onClick={holdDie}
-        className={`relative ${die.isHeld ? 'bg-green-400' : 'bg-white'} w-[80px] h-[60px] sm:h-[70px] md:h-[80px] rounded-lg cursor-pointer`}>
+        className={`relative ${die.isHeld ? 'bg-green-400' : 'bg-white'} w-[80px] h-[55px] sm:h-[70px] md:h-[80px] rounded-lg cursor-pointer`}>
 
         {/* top left */}
         <i className={`${hideDot(map.topLeft, die.number) ? 'hidden' : ''} absolute top-[5%] left-[10%] fa-solid fa-circle text-xs sm:text-sm md:text-lg`}></i>

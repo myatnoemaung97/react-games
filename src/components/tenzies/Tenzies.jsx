@@ -13,8 +13,6 @@ export default function Tenzies() {
   const { elapsedTime, reset } = useElapsedTime({ isPlaying: isPlaying })
   const [animation, setAnimation] = useState(false)
 
-  console.log('render')
-
   const heldDice = dice.filter(die => die.isHeld)
 
   const firstDieNumber = dice[0].number;
@@ -76,7 +74,7 @@ export default function Tenzies() {
       setAnimation(false)
     }, 200);
   }
-
+  
   function holdDie(id) {
     setDice(prevDice => prevDice.map(die => {
       return die.id == id ? { ...die, isHeld: !die.isHeld } : die
