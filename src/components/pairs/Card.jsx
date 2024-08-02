@@ -10,7 +10,7 @@ export default function Card({ card, flipCard, numberToImage, disabled }) {
       onClick={() => flipCard(card)}
       disabled={disabled}
     >
-      {card.flipped && <img src={numberToImage[card.num]} className={`w-full ${card.matched ? 'opacity-65' : ''}`}></img>}
+      {card.flipped && <img src={numberToImage[card.num]} className={` object-scale-down ${card.matched ? 'opacity-65' : ''}`}></img>}
     </button>
   )
 }

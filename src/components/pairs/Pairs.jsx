@@ -4,7 +4,7 @@ import Confetti from 'react-confetti'
 import heart from '../../assets/images/heart.png'
 import ball from '../../assets/images/ball.png'
 import honey from '../../assets/images/honey.png'
-import pineapple from '../../assets/images/pineapple.png'
+import smiley from '../../assets/images/smiley.png'
 import react from '../../assets/images/react.png'
 import wolf from '../../assets/images/wolf.png'
 import useTopScore from "../../useTopScore";
@@ -14,7 +14,7 @@ const numberToImage = {
   1: heart,
   2: ball,
   3: honey,
-  4: pineapple,
+  4: smiley,
   5: react,
   6: wolf
 }
@@ -31,7 +31,6 @@ export default function Pairs() {
   }
 
   function initCards() {
-    // const nums = [1, 1, 2, 2]
     const nums = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6]
 
 
@@ -92,7 +91,7 @@ export default function Pairs() {
     } else {
       setTimeout(() => {
         unflipCards()
-      }, 800)
+      }, 1500)
     }
   }
 

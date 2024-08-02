@@ -12,10 +12,7 @@ export default function useTopScore(key) {
   });
 
   function updateTopScore(newScore) {
-    console.log(newScore)
-    console.log(topScore)
     if (!topScore || newScore < topScore) {
-      console.log('if')
       localStorage.setItem(key, JSON.stringify(newScore))
 
       setTopScore(newScore)
