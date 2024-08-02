@@ -1,5 +1,5 @@
 import Die from "./Die"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { nanoid } from "nanoid";
 import Confetti from 'react-confetti'
 import { useElapsedTime } from "use-elapsed-time";
