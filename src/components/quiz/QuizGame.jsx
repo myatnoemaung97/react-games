@@ -103,6 +103,7 @@ export default function Quiz() {
   return (
     <div className='max-w-[600px] w-11/12 mx-auto font-mono mt-24'>
       <h1 className='text-center text-4xl md:text-5xl mb-10'>Quiz</h1>
+      <p className='mb-3'>{currentQuestion + 1}/{quizes.length}</p>
       {quizElements}
     </div>
   )

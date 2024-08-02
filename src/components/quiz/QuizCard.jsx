@@ -32,7 +32,7 @@ export default function QuizCard({ quiz, chooseAnswer }) {
   })
 
   return (
-    <div className="flex flex-col items-center space-y-8 text-base md:text-lg">
+    <div className="space-y-8 text-base md:text-lg">
       <p>{parser.parseFromString(quiz.question, 'text/html').body.textContent}</p>
       <div className="grid grid-cols-2 gap-8 w-full">
         {answerElements}

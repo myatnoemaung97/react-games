@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { nanoid } from "nanoid";
 import Confetti from 'react-confetti'
 import { useElapsedTime } from "use-elapsed-time";
+import HomeLink from "../HomeLink";
 
 export default function Tenzies() {
   const [dice, setDice] = useState(allNewDice());
@@ -74,7 +75,7 @@ export default function Tenzies() {
       setAnimation(false)
     }, 200);
   }
-  
+
   function holdDie(id) {
     setDice(prevDice => prevDice.map(die => {
       return die.id == id ? { ...die, isHeld: !die.isHeld } : die
@@ -93,28 +94,32 @@ export default function Tenzies() {
   const dieElements = dice.map(die => <Die die={die} holdDie={() => holdDie(die.id)} key={die.id} animation={animation} />)
 
   return (
-    <div className="max-w-[600px] w-11/12 my-0 mx-auto p-3 mt-5 rounded-lg bg-zinc-500 font-mono shadow-2xl">
-      <h1 className="text-4xl font-semibold text-center">Tenzies</h1>
-      <div className="flex justify-evenly mt-5 text-sm md:text-base">
-        <div className="bg-slate-300 p-3 rounded-lg">
-          <h1 className="text-lg md:text-xl mb-2">Top Scores</h1>
-          <p>Time: {topScores?.time || ''}s</p>
-          <p>Rolls: {topScores?.rolls || ''}</p>
+    <>
+      <HomeLink />
+      <div className="max-w-[600px] w-11/12 my-0 mx-auto p-3 mt-5 rounded-lg bg-zinc-500 font-mono shadow-2xl">
+        <h1 className="text-4xl font-semibold text-center">Tenzies</h1>
+        <div className="flex justify-evenly mt-5 text-sm md:text-base">
+          <div className="bg-slate-300 p-3 rounded-lg">
+            <h1 className="text-lg md:text-xl mb-2">Top Scores</h1>
+            <p>Time: {topScores?.time || ''}s</p>
+            <p>Rolls: {topScores?.rolls || ''}</p>
+          </div>
+          <div className="bg-slate-300 p-3 rounded-lg">
+            <h1 className="text-lg md:text-xl mb-2">Your Scores</h1>
+            <p>Time: {Math.round(elapsedTime * 10) / 10}s</p>
+            <p>Rolls: {rolls}</p>
+          </div>
         </div>
-        <div className="bg-slate-300 p-3 rounded-lg">
-          <h1 className="text-lg md:text-xl mb-2">Your Scores</h1>
-          <p>Time: {Math.round(elapsedTime * 10) / 10}s</p>
-          <p>Rolls: {rolls}</p>
-        </div>
-      </div>
 
-      <div className="w-full grid grid-cols-5 gap-5 mt-10">
-        {dieElements}
+        <div className="w-full grid grid-cols-5 gap-5 mt-10">
+          {dieElements}
+        </div>
+        <div className="flex justify-center mt-8">
+          <button onClick={tenzies ? playAgain : roll} className="bg-yellow-400 px-5 py-2 rounded">{tenzies ? 'Play Again' : 'Roll'}</button>
+        </div>
+        {tenzies && <Confetti width={window.innerWidth} height={window.innerHeight} />}
       </div>
-      <div className="flex justify-center mt-8">
-        <button onClick={tenzies ? playAgain : roll} className="bg-yellow-400 px-5 py-2 rounded">{tenzies ? 'Play Again' : 'Roll'}</button>
-      </div>
-      {tenzies && <Confetti width={window.innerWidth} height={window.innerHeight} />}
-    </div>
+    </>
+
   )
 }

@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { useState } from "react";
 import Confetti from 'react-confetti'
+import Card from "./Card";
 import heart from '../../assets/images/heart.png'
 import ball from '../../assets/images/ball.png'
 import honey from '../../assets/images/honey.png'
@@ -8,7 +9,6 @@ import smiley from '../../assets/images/smiley.png'
 import react from '../../assets/images/react.png'
 import wolf from '../../assets/images/wolf.png'
 import useTopScore from "../../useTopScore";
-import Card from "./Card";
 
 const numberToImage = {
   1: heart,
