@@ -9,28 +9,43 @@ export default function Quiz() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [searchParams] = useSearchParams();
 
-  function url() {
-    const params = new URLSearchParams()
+  useEffect(() => {
+    fetchQuizes();
+  }, []);
 
-    for (const [key, value] of searchParams.entries()) {
-      params.append(key, value)
+  function throttle(callback, timeframe = 6000) {
+    let lastCall = JSON.parse(localStorage.getItem('lastCall')) || 0;
+    let timeout;
+
+    return () => {
+      let timePassed = Date.now() - lastCall;
+
+      if (timePassed <= timeframe) {
+        console.log('throttle')
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+          lastCall = Date.now();
+          localStorage.setItem('lastCall', JSON.stringify(lastCall));
+          callback();
+        }, timeframe - timePassed);
+      } else {
+        console.log('immediately')
+        clearTimeout(timeout)
+        lastCall = Date.now();
+        localStorage.setItem('lastCall', JSON.stringify(lastCall));
+        callback();
+      }
     }
-
-    return `https://opentdb.com/api.php?amount=5&type=multiple&${params.toString()}`;
   }
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetch(url())
-        .then(res => res.json())
-        .then(data => {
-          setQuizes(initQuizes(data.results))
-          setLoading(false)
-        })
-    }, 5000)
-
-    return () => clearTimeout(timer);
-  }, []);
+  const fetchQuizes = throttle(() => {
+    fetch(url())
+      .then(res => res.json())
+      .then(data => {
+        setQuizes(initQuizes(data.results))
+        setLoading(false)
+      })
+  })
 
   const score = quizes.filter(quiz => quiz.chosen_answer == quiz.correct_answer).length
 
@@ -40,6 +55,16 @@ export default function Quiz() {
       index++;
       return { ...quiz, id: index, chosen_answer: '' }
     })
+  }
+
+  function url() {
+    const params = new URLSearchParams()
+
+    for (const [key, value] of searchParams.entries()) {
+      params.append(key, value)
+    }
+
+    return `https://opentdb.com/api.php?amount=5&type=multiple&${params.toString()}`;
   }
 
   function chooseAnswer(quizId, ans) {

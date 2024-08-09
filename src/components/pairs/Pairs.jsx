@@ -8,7 +8,7 @@ import honey from '../../assets/images/honey.png'
 import smiley from '../../assets/images/smiley.png'
 import react from '../../assets/images/react.png'
 import wolf from '../../assets/images/wolf.png'
-import useTopScore from "../../useTopScore";
+import useTopScore from "../../hooks/useTopScore";
 
 const numberToImage = {
   1: heart,

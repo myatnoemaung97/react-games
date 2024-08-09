@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import useParamsBuilder from "../../hooks/useParamsBuilder";
 
 export default function Quiz() {
-  const [options, setOptions] = useState({
+  const [params, setParams] = useParamsBuilder({
     category: '', difficulty: ''
   })
   const [categories, setCategories] = useState([])
@@ -12,25 +13,6 @@ export default function Quiz() {
       .then(res => res.json())
       .then(data => setCategories(data.trivia_categories))
   }, [])
-
-  function gameUrl(options) {
-    const params = new URLSearchParams();
-
-    for (const [key, value] of Object.entries(options)) {
-      if (value) {
-        params.append(key, value)
-      }
-    }
-
-    return params.toString();
-  }
-
-  function handleChange(event) {
-    const { value, name } = event.target;
-    setOptions(prevOptions => {
-      return { ...prevOptions, [name]: value }
-    })
-  }
 
   const cateOptions = categories.map(cate => {
     return <option value={cate.id} key={cate.id} className="text-sm md:text-base lg:text-lg">{cate.name}</option>
@@ -44,8 +26,7 @@ export default function Quiz() {
           <label htmlFor="category">Choose category</label>
           <select
             className="rounded py-2 px-3 bg-slate-300"
-            value={options.category}
-            onChange={(event) => handleChange(event)}
+            onChange={(event) => setParams(event)}
             name="category"
           >
             <option value="" className="text-sm md:text-base lg:text-lg">All</option>
@@ -57,8 +38,7 @@ export default function Quiz() {
           <label htmlFor="difficulty">Choose difficulty</label>
           <select
             className="rounded py-2 px-3 bg-slate-300"
-            value={options.difficulty}
-            onChange={(event) => handleChange(event)}
+            onChange={(event) => setParams(event)}
             name="difficulty"
           >
             <option value="" className="text-sm md:text-base lg:text-lg">All</option>
@@ -69,7 +49,7 @@ export default function Quiz() {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Link to={`play?${gameUrl(options)}`} className="text-lg bg-slate-300 py-2 px-4 rounded">Play</Link>
+          <Link to={`play?${params}`} className="text-lg bg-slate-300 py-2 px-4 rounded">Play</Link>
         </div>
       </div>
     </div>
