@@ -7,53 +7,53 @@ const players = {
   two: 'X',
 };
 
-const winConditions = {
-  row1: {
-    tileNumbers: [0, 1, 2],
-    strike: 'top-[16.67%] left-0 right-0'
-  },
-
-  row2: {
-    tileNumbers: [3, 4, 5],
-    strike: 'top-1/2 left-0 right-0'
-  },
-
-  row3: {
-    tileNumbers: [6, 7, 8],
-    strike: 'bottom-[16.67%] left-0 right-0'
-  },
-
-  col1: {
-    tileNumbers: [0, 3, 6],
-    strike: 'top-0 bottom-0 left-[16.67%]'
-  },
-
-  col2: {
-    tileNumbers: [1, 4, 7],
-    strike: 'top-0 bottom-0 left-1/2'
-  },
-
-  col3: {
-    tileNumbers: [2, 5, 8],
-    strike: 'top-0 bottom-0 right-[16.67%]'
-  },
-
-  dia1: {
-    tileNumbers: [0, 4, 8],
-    strike: 'top-1/2 left-0 right-0 rotate-45 scale-x-[141%]'
-  },
-
-  dia2: {
-    tileNumbers: [2, 4, 6],
-    strike: 'top-1/2 left-0 right-0 -rotate-45 scale-x-[141%]'
-  }
-};
-
 export default function TicTacToeGame() {
   const [tiles, setTiles] = useState(() => initTiles());
   const [currentPlayer, setCurrentPlayer] = useState(players.one);
   const [disabled, setDisabled] = useState(false)
   const [searchParams] = useSearchParams();
+
+  const winConditions = {
+    row1: {
+      tileSet: [tiles[0], tiles[1], tiles[2]],
+      strike: 'top-[16.67%] left-0 right-0'
+    },
+
+    row2: {
+      tileSet: [tiles[3], tiles[4], tiles[5]],
+      strike: 'top-1/2 left-0 right-0'
+    },
+
+    row3: {
+      tileSet: [tiles[6], tiles[7], tiles[8]],
+      strike: 'bottom-[16.67%] left-0 right-0'
+    },
+
+    col1: {
+      tileSet: [tiles[0], tiles[3], tiles[6]],
+      strike: 'top-0 bottom-0 left-[16.67%]'
+    },
+
+    col2: {
+      tileSet: [tiles[1], tiles[4], tiles[7]],
+      strike: 'top-0 bottom-0 left-1/2'
+    },
+
+    col3: {
+      tileSet: [tiles[2], tiles[5], tiles[8]],
+      strike: 'top-0 bottom-0 right-[16.67%]'
+    },
+
+    dia1: {
+      tileSet: [tiles[0], tiles[4], tiles[8]],
+      strike: 'top-1/2 left-0 right-0 rotate-45 scale-x-[141%]'
+    },
+
+    dia2: {
+      tileSet: [tiles[2], tiles[4], tiles[6]],
+      strike: 'top-1/2 left-0 right-0 -rotate-45 scale-x-[141%]'
+    }
+  };
 
   const isWon = hasWon();
   const isDrawn = !isWon && tiles.every(tile => tile.playedBy);
@@ -85,20 +85,34 @@ export default function TicTacToeGame() {
   }
 
   function hasWon() {
-    for (const { tileNumbers, strike } of Object.values(winConditions)) {
-      const checkedTiles = tiles.filter(tile => tileNumbers.includes(tile.number))
-
-      const firstTile = checkedTiles[0];
+    for (const { tileSet, strike } of Object.values(winConditions)) {
+      const firstTile = tileSet[0];
 
       if (!firstTile.playedBy) {
         continue;
       }
 
-      if (checkedTiles.every(tile => tile.playedBy == firstTile.playedBy)) {
+      if (tileSet.every(tile => tile.playedBy == firstTile.playedBy)) {
         return {
           player: firstTile.playedBy,
           strike
         };
+      }
+    }
+
+    return null;
+  }
+
+  function blockTile() {
+    for (const { tileSet } of Object.values(winConditions)) {
+      const playedTiles = tileSet.filter(tile => tile.playedBy);
+      const unplayedTiles = tileSet.filter(tile => !tile.playedBy);
+
+      if (unplayedTiles.length == 1) {
+        const firstTile = playedTiles[0];
+        if (playedTiles.every(tile => tile.playedBy == firstTile.playedBy)) {
+          return unplayedTiles[0].number;
+        }
       }
     }
 
@@ -110,10 +124,6 @@ export default function TicTacToeGame() {
     setCurrentPlayer(players.one);
   }
 
-  function clickTile(tileNumber) {
-    playTile(tileNumber, players.one);
-  }
-
   function playTile(tileNumber, player) {
     setTiles(prevTiles => prevTiles.map(tile => {
       return tile.number == tileNumber ? { ...tile, playedBy: player } : tile;
@@ -122,7 +132,7 @@ export default function TicTacToeGame() {
   }
 
   function cpuMove(difficulty) {
-    playTile(easyAi(), players.two);
+    playTile(mediumAi(), players.two);
   }
 
   function easyAi() {
@@ -130,7 +140,7 @@ export default function TicTacToeGame() {
   }
 
   function mediumAi() {
-
+    return blockTile() || randomTile();
   }
 
   function randomTile() {
@@ -154,7 +164,7 @@ export default function TicTacToeGame() {
       <button
         className={`border-2 border-black h-[100px] text-6xl 
         text-${getPlayerColor(tile.playedBy)}-500`}
-        onClick={() => clickTile(tile.number)}
+        onClick={() => playTile(tile.number, currentPlayer)}
         key={tile.number}
         disabled={tile.playedBy || isWon || disabled}
       >
