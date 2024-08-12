@@ -10,7 +10,9 @@ const players = {
 export default function TicTacToeGame() {
   const [tiles, setTiles] = useState(() => initTiles());
   const [currentPlayer, setCurrentPlayer] = useState(players.one);
-  const [disabled, setDisabled] = useState(false)
+  const [player, setPlayer] = useState(players.one);
+  const [disabled, setDisabled] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
   const [searchParams] = useSearchParams();
 
   const winConditions = {
@@ -60,7 +62,7 @@ export default function TicTacToeGame() {
   const isFinished = isWon || isDrawn;
 
   useEffect(() => {
-    if (searchParams.get('vs') == 'pve' && currentPlayer == players.two && !isFinished) {
+    if (searchParams.get('vs') == 'pve' && currentPlayer != player && !isFinished) {
       setDisabled(true)
       const timer = setTimeout(() => {
         cpuMove('easy');
@@ -69,7 +71,7 @@ export default function TicTacToeGame() {
 
       return () => clearTimeout(timer);
     }
-  }, [currentPlayer])
+  })
 
   function initTiles() {
     const tiles = [];
@@ -82,6 +84,10 @@ export default function TicTacToeGame() {
     }
 
     return tiles;
+  }
+
+  function getCpu() {
+    return player == players.one ? players.two : players.one;
   }
 
   function hasWon() {
@@ -103,25 +109,11 @@ export default function TicTacToeGame() {
     return null;
   }
 
-  function blockTile() {
-    for (const { tileSet } of Object.values(winConditions)) {
-      const playedTiles = tileSet.filter(tile => tile.playedBy);
-      const unplayedTiles = tileSet.filter(tile => !tile.playedBy);
-
-      if (unplayedTiles.length == 1) {
-        const firstTile = playedTiles[0];
-        if (playedTiles.every(tile => tile.playedBy == firstTile.playedBy)) {
-          return unplayedTiles[0].number;
-        }
-      }
-    }
-
-    return null;
-  }
-
   function reset() {
     setTiles(() => initTiles());
     setCurrentPlayer(players.one);
+    setPlayer(players.one);
+    setIsStarted(false);
   }
 
   function playTile(tileNumber, player) {
@@ -129,10 +121,12 @@ export default function TicTacToeGame() {
       return tile.number == tileNumber ? { ...tile, playedBy: player } : tile;
     }))
     setCurrentPlayer(player == players.one ? players.two : players.one);
+    setIsStarted(true);
   }
 
   function cpuMove(difficulty) {
-    playTile(mediumAi(), players.two);
+    const cpu = getCpu();
+    playTile(mediumAi(), cpu);
   }
 
   function easyAi() {
@@ -140,7 +134,11 @@ export default function TicTacToeGame() {
   }
 
   function mediumAi() {
-    return blockTile() || randomTile();
+    return winningOrBlockTile() ?? randomTile();
+  }
+
+  function impossibleAi() {
+    return winningOrBlockTile() ?? optimalTile() ?? randomTile();
   }
 
   function randomTile() {
@@ -151,12 +149,60 @@ export default function TicTacToeGame() {
     return randomTile;
   }
 
+  function winningOrBlockTile() {
+    let blockMove;
+    const cpu = getCpu();
+
+    for (const { tileSet } of Object.values(winConditions)) {
+      const playedTiles = tileSet.filter(tile => tile.playedBy);
+      const unplayedTiles = tileSet.filter(tile => !tile.playedBy);
+
+      if (unplayedTiles.length != 1) {
+        continue;
+      }
+
+      const firstTile = playedTiles[0];
+
+      if (playedTiles.every(tile => tile.playedBy == cpu)) {
+        return unplayedTiles[0].number;
+      }
+
+      if (playedTiles.every(tile => tile.playedBy == firstTile.playedBy)) {
+        blockMove = unplayedTiles[0].number;
+      }
+    }
+    return blockMove;
+  }
+
+  function optimalTile() {
+    const cornerTiles = [tiles[0], tiles[2], tiles[6], tiles[8]];
+    const centerTile = tiles[4];
+
+    if (cornerTiles.some(tile => tile.playedBy == player) && !centerTile.playedBy) { // one of the corner tile is played by human
+      return 4; // center tile
+    } else if (cornerTiles.some(tile => !tile.playedBy)){
+      let index;
+
+      do {
+        index = Math.floor(Math.random() * 4);
+      } while (cornerTiles[index].playedBy);
+
+      return cornerTiles[index].number;
+    }
+
+    return null;
+  }
+
   function getPlayerColor(player) {
     if (player == players.one) {
       return 'yellow';
     } else {
       return 'red';
     }
+  }
+
+  function choosePlayer() {
+    setPlayer(players.two);
   }
 
   const tileElements = tiles.map(tile => {
@@ -178,26 +224,37 @@ export default function TicTacToeGame() {
     <div className="max-w-[1000px] w-11/12 my-0 mx-auto flex flex-col font-mono">
       <h1 className="text-5xl text-center mt-3">Tic-Tac-Toe</h1>
       <div className="w-full h-[250px] flex flex-col space-y-5 items-center justify-center mt-3">
-        <div className="">
+        <div className="flex flex-col items-center space-y-5">
+          {searchParams.get('vs') == 'pve' &&
+            <p>Start game or select player</p>
+          }
           <div className="flex space-x-5 text-3xl">
-            <div className={
-              `font-sans border border-black rounded text-yellow-500 py-3 px-8
+            <button
+              className={
+                `font-sans border border-black rounded text-yellow-500 py-3 px-8
             ${currentPlayer == players.one ? 'border-b-green-500 border-b-4' : ''}`
-            }>
+              }
+              disabled={searchParams.get('vs') == 'pvp' || isStarted}
+            >
               O
-            </div>
-            <div className={
-              `font-sans border border-black rounded text-red-500 py-3 px-8
+            </button>
+            <button
+              onClick={() => choosePlayer()}
+              className={`font-sans border border-black rounded text-red-500 py-3 px-8
             ${currentPlayer == players.two ? 'border-b-green-500 border-b-4' : ''}`
-            }>
+              }
+              disabled={searchParams.get('vs') == 'pvp' || isStarted}
+            >
               X
-            </div>
+            </button>
           </div>
-          <h2 className="text-2xl text-center mt-3">
-            <span className={`font-sans text-${getPlayerColor(currentPlayer)}-500`}>
-              {currentPlayer}
-            </span>'s turn
-          </h2>
+          {isStarted &&
+            <h2 className="text-2xl text-center mt-3">
+              <span className={`font-sans text-${getPlayerColor(currentPlayer)}-500`}>
+                {currentPlayer}
+              </span>'s turn
+            </h2>
+          }
         </div>
 
         {isWon &&
@@ -229,7 +286,6 @@ export default function TicTacToeGame() {
           <div className={`border border-black absolute
             ${isWon.strike}`}></div>
         }
-
         {tileElements}
       </div>
       <div className="flex justify-center mt-3">
